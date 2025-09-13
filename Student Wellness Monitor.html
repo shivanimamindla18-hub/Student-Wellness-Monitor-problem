@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Wellness Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .mood-selector {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .mood-btn {
+            background: white;
+            border: 3px solid #ddd;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mood-btn:hover {
+            transform: scale(1.1);
+            border-color: #4CAF50;
+        }
+
+        .mood-btn.selected {
+            border-color: #4CAF50;
+            background: #4CAF50;
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .dashboard {
+            grid-column: span 2;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .chart-container {
+            height: 300px;
+            background: white;
+            border-radius: 10px;
+            margin: 20px 0;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mood-history {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .mood-entry {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            border: 2px solid #4CAF50;
+            margin: 5px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .recommendations {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        }
+
+        .recommendation-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #ff6b6b;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .wellness-resources {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .resource-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .resource-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .sentiment-indicator {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .positive { background: #4CAF50; }
+        .neutral { background: #FFC107; }
+        .negative { background: #f44336; }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            .dashboard {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌟 Student Wellness Platform</h1>
+            <p>Supporting your mental health journey through AI-driven monitoring and personalized care</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Daily Check-in Section -->
+            <div class="section">
+                <h2>📝 Daily Wellness Check-in</h2>
+                <div class="form-group">
+                    <label>How are you feeling today?</label>
+                    <div class="mood-selector">
+                        <div class="mood-btn" data-mood="very-sad" title="Very Sad">😢</div>
+                        <div class="mood-btn" data-mood="sad" title="Sad">😟</div>
+                        <div class="mood-btn" data-mood="neutral" title="Neutral">😐</div>
+                        <div class="mood-btn" data-mood="happy" title="Happy">😊</div>
+                        <div class="mood-btn" data-mood="very-happy" title="Very Happy">😄</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="stress-level">Stress Level (1-10):</label>
+                    <input type="range" id="stress-level" min="1" max="10" value="5">
+                    <span id="stress-value">5</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="sleep-hours">Hours of Sleep:</label>
+                    <input type="number" id="sleep-hours" min="0" max="24" value="8">
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Additional Notes:</label>
+                    <textarea id="notes" rows="3" placeholder="How was your day? Any specific concerns?"></textarea>
+                </div>
+
+                <button class="btn" onclick="submitCheckIn()">Submit Check-in</button>
+            </div>
+
+            <!-- Sentiment Analysis Section -->
+            <div class="section">
+                <h2>🧠 Emotional State Analysis</h2>
+                <div class="form-group">
+                    <label for="text-analysis">Share your thoughts:</label>
+                    <textarea id="text-analysis" rows="4" placeholder="Express how you're feeling in your own words..."></textarea>
+                </div>
+                <button class="btn" onclick="analyzeSentiment()">Analyze Sentiment</button>
+                
+                <div id="sentiment-result"></div>
+                
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>Current Emotional State:</label>
+                    <div id="emotional-state" class="sentiment-indicator neutral">Neutral</div>
+                </div>
+            </div>
+
+            <!-- Wellness Dashboard -->
+            <div class="section dashboard">
+                <h2>📊 Wellness Trends Dashboard</h2>
+                <div class="chart-container">
+                    <canvas id="moodChart" width="400" height="200"></canvas>
+                </div>
+
+                <div class="mood-history" id="mood-history">
+                    <div class="mood-entry">Today: 😊 Happy</div>
+                    <div class="mood-entry">Yesterday: 😐 Neutral</div>
+                    <div class="mood-entry">2 days ago: 😊 Happy</div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 20px;">
+                    <div style="text-align: center; padding: 15px; background: white; border-radius: 10px;">
+                        <div style="font-size: 2em; color: #4CAF50;">7.2</div>
+                        <div>Avg Mood</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: white; border-radius: 10px;">
+                        <div style="font-size: 2em; color: #FF9800;">4.5</div>
+                        <div>Avg Stress</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: white; border-radius: 10px;">
+                        <div style="font-size: 2em; color: #2196F3;">7.8</div>
+                        <div>Avg Sleep</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personalized Recommendations -->
+            <div class="section recommendations">
+                <h2>💡 Personalized Wellness Recommendations</h2>
+                <div id="recommendations-list">
+                    <div class="recommendation-item">
+                        <strong>🧘 Mindfulness Break</strong>
+                        <p>Based on your stress level, try a 5-minute breathing exercise.</p>
+                    </div>
+                    <div class="recommendation-item">
+                        <strong>🚶 Take a Walk</strong>
+                        <p>Physical activity can help improve your mood. Try a 10-minute walk outside.</p>
+                    </div>
+                    <div class="recommendation-item">
+                        <strong>💤 Sleep Hygiene</strong>
+                        <p>Maintain a consistent sleep schedule. Aim for 7-9 hours per night.</p>
+                    </div>
+                </div>
+                <button class="btn" onclick="generateRecommendations()">Get New Recommendations</button>
+            </div>
+
+            <!-- Wellness Resources -->
+            <div class="section">
+                <h2>🎯 Wellness Resources</h2>
+                <div class="wellness-resources">
+                    <div class="resource-card" onclick="openResource('meditation')">
+                        <div class="resource-icon">🧘</div>
+                        <h3>Meditation</h3>
+                        <p>Guided meditation sessions</p>
+                    </div>
+                    <div class="resource-card" onclick="openResource('counseling')">
+                        <div class="resource-icon">💬</div>
+                        <h3>Counseling</h3>
+                        <p>Professional support</p>
+                    </div>
+                    <div class="resource-card" onclick="openResource('crisis')">
+                        <div class="resource-icon">🚨</div>
+                        <h3>Crisis Help</h3>
+                        <p>24/7 emergency support</p>
+                    </div>
+                    <div class="resource-card" onclick="openResource('community')">
+                        <div class="resource-icon">👥</div>
+                        <h3>Community</h3>
+                        <p>Peer support groups</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let selectedMood = null;
+        let moodHistory = [];
+        let stressHistory = [];
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMoodSelector();
+            initializeStressSlider();
+            drawMoodChart();
+        });
+
+        // Mood selector functionality
+        function initializeMoodSelector() {
+            const moodButtons = document.querySelectorAll('.mood-btn');
+            moodButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    moodButtons.forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedMood = this.getAttribute('data-mood');
+                });
+            });
+        }
+
+        // Stress level slider
+        function initializeStressSlider() {
+            const stressSlider = document.getElementById('stress-level');
+            const stressValue = document.getElementById('stress-value');
+            
+            stressSlider.addEventListener('input', function() {
+                stressValue.textContent = this.value;
+            });
+        }
+
+        // Submit daily check-in
+        function submitCheckIn() {
+            const stressLevel = document.getElementById('stress-level').value;
+            const sleepHours = document.getElementById('sleep-hours').value;
+            const notes = document.getElementById('notes').value;
+
+            if (!selectedMood) {
+                alert('Please select your mood before submitting.');
+                return;
+            }
+
+            // Store the data (in a real app, this would go to a database)
+            const checkInData = {
+                date: new Date().toLocaleDateString(),
+                mood: selectedMood,
+                stress: stressLevel,
+                sleep: sleepHours,
+                notes: notes,
+                timestamp: new Date()
+            };
+
+            // Add to history
+            moodHistory.unshift(checkInData);
+            updateMoodHistory();
+            updateRecommendations(checkInData);
+
+            // Reset form
+            document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
+            document.getElementById('stress-level').value = 5;
+            document.getElementById('stress-value').textContent = '5';
+            document.getElementById('sleep-hours').value = 8;
+            document.getElementById('notes').value = '';
+            selectedMood = null;
+
+            alert('Check-in submitted successfully! 🎉');
+        }
+
+        // Update mood history display
+        function updateMoodHistory() {
+            const historyContainer = document.getElementById('mood-history');
+            historyContainer.innerHTML = '';
+
+            moodHistory.slice(0, 5).forEach(entry => {
+                const entryDiv = document.createElement('div');
+                entryDiv.className = 'mood-entry';
+                
+                const moodEmoji = getMoodEmoji(entry.mood);
+                const moodText = entry.mood.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+                
+                entryDiv.textContent = `${entry.date}: ${moodEmoji} ${moodText}`;
+                historyContainer.appendChild(entryDiv);
+            });
+        }
+
+        // Get emoji for mood
+        function getMoodEmoji(mood) {
+            const emojiMap = {
+                'very-sad': '😢',
+                'sad': '😟',
+                'neutral': '😐',
+                'happy': '😊',
+                'very-happy': '😄'
+            };
+            return emojiMap[mood] || '😐';
+        }
+
+        // Sentiment analysis
+        function analyzeSentiment() {
+            const text = document.getElementById('text-analysis').value.trim();
+            if (!text) {
+                alert('Please enter some text to analyze.');
+                return;
+            }
+
+            // Simple sentiment analysis (in a real app, you'd use NLP APIs)
+            const positiveWords = ['happy', 'good', 'great', 'excellent', 'amazing', 'wonderful', 'fantastic', 'love', 'joy', 'excited'];
+            const negativeWords = ['sad', 'bad', 'terrible', 'awful', 'hate', 'depressed', 'angry', 'frustrated', 'worried', 'anxious'];
+
+            const words = text.toLowerCase().split(/\s+/);
+            let positiveCount = 0;
+            let negativeCount = 0;
+
+            words.forEach(word => {
+                if (positiveWords.includes(word)) positiveCount++;
+                if (negativeWords.includes(word)) negativeCount++;
+            });
+
+            let sentiment, sentimentClass;
+            if (positiveCount > negativeCount) {
+                sentiment = 'Positive';
+                sentimentClass = 'positive';
+            } else if (negativeCount > positiveCount) {
+                sentiment = 'Negative';
+                sentimentClass = 'negative';
+            } else {
+                sentiment = 'Neutral';
+                sentimentClass = 'neutral';
+            }
+
+            const resultDiv = document.getElementById('sentiment-result');
+            resultDiv.innerHTML = `
+                <div class="sentiment-indicator ${sentimentClass}" style="margin-top: 15px;">
+                    Sentiment Analysis: ${sentiment}
+                </div>
+                <p style="margin-top: 10px; font-size: 14px; color: #666;">
+                    Analysis based on ${words.length} words. Positive indicators: ${positiveCount}, Negative indicators: ${negativeCount}
+                </p>
+            `;
+
+            // Update emotional state
+            const emotionalState = document.getElementById('emotional-state');
+            emotionalState.textContent = sentiment;
+            emotionalState.className = `sentiment-indicator ${sentimentClass}`;
+        }
+
+        // Generate personalized recommendations
+        function generateRecommendations() {
+            const recommendations = [
+                {
+                    icon: '🧘',
+                    title: 'Deep Breathing Exercise',
+                    desc: 'Try the 4-7-8 breathing technique to reduce anxiety and promote relaxation.'
+                },
+                {
+                    icon: '🎵',
+                    title: 'Listen to Calming Music',
+                    desc: 'Classical or nature sounds can help improve your mood and focus.'
+                },
+                {
+                    icon: '📚',
+                    title: 'Practice Gratitude',
+                    desc: 'Write down three things you\'re grateful for today.'
+                },
+                {
+                    icon: '💪',
+                    title: 'Light Exercise',
+                    desc: 'Even 10 minutes of stretching can boost your energy and mood.'
+                },
+                {
+                    icon: '🌱',
+                    title: 'Connect with Nature',
+                    desc: 'Spend time outdoors or tend to a plant for mental clarity.'
+                },
+                {
+                    icon: '👥',
+                    title: 'Social Connection',
+                    desc: 'Reach out to a friend or family member for a meaningful conversation.'
+                }
+            ];
+
+            // Randomly select 3 recommendations
+            const selectedRecs = recommendations.sort(() => 0.5 - Math.random()).slice(0, 3);
+            
+            const recList = document.getElementById('recommendations-list');
+            recList.innerHTML = '';
+
+            selectedRecs.forEach(rec => {
+                const recDiv = document.createElement('div');
+                recDiv.className = 'recommendation-item';
+                recDiv.innerHTML = `
+                    <strong>${rec.icon} ${rec.title}</strong>
+                    <p>${rec.desc}</p>
+                `;
+                recList.appendChild(recDiv);
+            });
+        }
+
+        // Update recommendations based on check-in data
+        function updateRecommendations(data) {
+            const recList = document.getElementById('recommendations-list');
+            recList.innerHTML = '';
+
+            if (data.stress > 7) {
+                recList.innerHTML += `
+                    <div class="recommendation-item">
+                        <strong>🧘 High Stress Alert</strong>
+                        <p>Your stress level is high. Consider taking a break and practicing relaxation techniques.</p>
+                    </div>
+                `;
+            }
+
+            if (data.sleep < 6) {
+                recList.innerHTML += `
+                    <div class="recommendation-item">
+                        <strong>💤 Sleep Priority</strong>
+                        <p>You're not getting enough sleep. Try to establish a better bedtime routine.</p>
+                    </div>
+                `;
+            }
+
+            if (['sad', 'very-sad'].includes(data.mood)) {
+                recList.innerHTML += `
+                    <div class="recommendation-item">
+                        <strong>💙 Mood Support</strong>
+                        <p>Consider talking to someone you trust or engaging in activities you enjoy.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Open wellness resources
+        function openResource(type) {
+            const resources = {
+                meditation: 'Opening meditation resources... (This would link to guided meditation apps or websites)',
+                counseling: 'Connecting to counseling services... (This would show available counselors or booking options)',
+                crisis: 'Crisis Helpline: If you\'re in immediate danger, call emergency services. For mental health crisis: National Suicide Prevention Lifeline: 988',
+                community: 'Loading peer support groups... (This would show local or online support communities)'
+            };
+
+            alert(resources[type]);
+        }
+
+        // Simple chart drawing (placeholder for real charting library)
+        function drawMoodChart() {
+            const canvas = document.getElementById('moodChart');
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw a simple trend line (placeholder)
+            ctx.strokeStyle = '#4CAF50';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            
+            // Sample data points
+            const points = [
+                { x: 50, y: 150 },
+                { x: 100, y: 120 },
+                { x: 150, y: 100 },
+                { x: 200, y: 80 },
+                { x: 250, y: 90 },
+                { x: 300, y: 70 },
+                { x: 350, y: 60 }
+            ];
+            
+            points.forEach((point, index) => {
+                if (index === 0) {
+                    ctx.moveTo(point.x, point.y);
+                } else {
+                    ctx.lineTo(point.x, point.y);
+                }
+            });
+            
+            ctx.stroke();
+            
+            // Draw points
+            ctx.fillStyle = '#4CAF50';
+            points.forEach(point => {
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
+                ctx.fill();
+            });
+            
+            // Add labels
+            ctx.fillStyle = '#333';
+            ctx.font = '14px Arial';
+            ctx.fillText('Mood Trend Over Time', 10, 20);
+            ctx.fillText('Better →', 10, canvas.height - 10);
+            ctx.fillText('← Worse', canvas.width - 80, canvas.height - 10);
+        }
+    </script>
+</body>
+</html>
